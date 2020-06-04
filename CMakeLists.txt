@@ -1,9 +1,10 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.8)
 
 project(filemergesort LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_REQUIRED_FLAGS ${CMAKE_CXX17_STANDARD_COMPILE_OPTION})
 
 add_executable(filemergesort main.cpp open_file.cpp open_file.h tmp_file.cpp tmp_file.h cancel.h cancel.cpp)
 add_executable(gentest EXCLUDE_FROM_ALL gentest.cpp open_file.cpp open_file.h)
@@ -14,6 +15,14 @@ check_cxx_compiler_flag(-Wall CXX_COMPILER_SUPPORTS_WALL)
 if(CXX_COMPILER_SUPPORTS_WALL)
     target_compile_options(filemergesort PRIVATE -Wall)
     target_compile_options(gentest PRIVATE -Wall)
+endif()
+
+check_cxx_source_compiles("#include <filesystem>\nint main() {}" HAS_STD_FILESYSTEM)
+
+if(HAS_STD_FILESYSTEM)
+    target_compile_definitions(filemergesort PRIVATE USE_STD_FILESYSTEM)
+else()
+    target_link_libraries(filemergesort PRIVATE stdc++fs)
 endif()
 
 add_custom_target(test-small)

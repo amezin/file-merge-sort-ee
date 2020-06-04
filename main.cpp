@@ -4,7 +4,14 @@
 #include <exception>
 #include <list>
 #include <vector>
+
+#ifdef USE_STD_FILESYSTEM
 #include <filesystem>
+namespace filesystem = std::filesystem;
+#else
+#include <experimental/filesystem>
+namespace filesystem = std::experimental::filesystem;
+#endif
 
 #include "open_file.h"
 #include "tmp_file.h"
@@ -165,10 +172,10 @@ int main(int argc, char *argv[])
     std::signal(SIGTERM, set_interrupt_flag);
 
     try {
-        auto input_path = std::filesystem::path(argv[ARG_INPUT_FILE]);
-        auto output_path = std::filesystem::path(argv[ARG_OUTPUT_FILE]);
+        auto input_path = filesystem::path(argv[ARG_INPUT_FILE]);
+        auto output_path = filesystem::path(argv[ARG_OUTPUT_FILE]);
 
-        if (std::filesystem::exists(output_path) && std::filesystem::equivalent(input_path, output_path)) {
+        if (filesystem::exists(output_path) && filesystem::equivalent(input_path, output_path)) {
             std::fprintf(
                 stderr,
                 "Paths '%s' and '%s' point to the same file. In-place sort is not implemented\n",
@@ -178,7 +185,7 @@ int main(int argc, char *argv[])
             return EXIT_FAILURE;
         }
 
-        auto tempdir = std::filesystem::temp_directory_path();
+        auto tempdir = filesystem::temp_directory_path();
         auto tempbase = tempdir / "fms-tmp";
 
         tmp_file_factory tmp_files(tempbase.c_str());
