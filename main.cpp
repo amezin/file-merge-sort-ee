@@ -165,13 +165,26 @@ int main(int argc, char *argv[])
     std::signal(SIGTERM, set_interrupt_flag);
 
     try {
+        auto input_path = std::filesystem::path(argv[ARG_INPUT_FILE]);
+        auto output_path = std::filesystem::path(argv[ARG_OUTPUT_FILE]);
+
+        if (std::filesystem::exists(output_path) && std::filesystem::equivalent(input_path, output_path)) {
+            std::fprintf(
+                stderr,
+                "Paths '%s' and '%s' point to the same file. In-place sort is not implemented\n",
+                input_path.c_str(),
+                output_path.c_str()
+            );
+            return EXIT_FAILURE;
+        }
+
         auto tempdir = std::filesystem::temp_directory_path();
         auto tempbase = tempdir / "fms-tmp";
 
         tmp_file_factory tmp_files(tempbase.c_str());
 
-        auto input_file = open_file(argv[ARG_INPUT_FILE], "rb");
-        auto output_file = open_file(argv[ARG_OUTPUT_FILE], "wb");
+        auto input_file = open_file(input_path.c_str(), "rb");
+        auto output_file = open_file(output_path.c_str(), "wb");
 
         merge_sort_file(input_file, output_file, chunk_size, tmp_files, interrupt);
 
