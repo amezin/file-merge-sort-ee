@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/amezin/file-merge-sort-ee.svg?branch=master)](https://travis-ci.org/amezin/file-merge-sort-ee)
+
 Build:
 
     $ mkdir build
