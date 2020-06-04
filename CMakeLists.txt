@@ -66,4 +66,4 @@ add_custom_target(
     DEPENDS test${BIG_TEST_SIZE}_${BIG_CHUNK_SIZE}.output testdata-${BIG_TEST_SIZE}
 )
 
-add_custom_target(test DEPENDS test-small test-big)
+add_custom_target(check DEPENDS test-small test-big)
