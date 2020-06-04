@@ -5,7 +5,7 @@ project(filemergesort LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_executable(filemergesort main.cpp open_file.cpp open_file.h tmp_file.cpp tmp_file.h)
+add_executable(filemergesort main.cpp open_file.cpp open_file.h tmp_file.cpp tmp_file.h cancel.h cancel.cpp)
 add_executable(gentest EXCLUDE_FROM_ALL gentest.cpp open_file.cpp open_file.h)
 
 include(CheckCXXCompilerFlag)
