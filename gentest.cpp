@@ -7,7 +7,7 @@
 
 #include "open_file.h"
 
-typedef unsigned long long value;
+typedef unsigned long long element;
 
 enum {
     ARG_CMD,
@@ -33,9 +33,9 @@ int main(int argc, char *argv[])
     }
 
     std::default_random_engine generator;
-    std::uniform_int_distribution<value> dist;
+    std::uniform_int_distribution<element> dist;
 
-    std::vector<value> data;
+    std::vector<element> data;
     data.reserve(size);
     while (size--) {
         data.push_back(dist(generator));
@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
 
     {
         open_file input(argv[ARG_INPUT_FILE], "wb");
-        std::copy(data.begin(), data.end(), open_file_write_iterator<value>(input));
+        std::copy(data.begin(), data.end(), open_file_write_iterator<element>(input));
         input.close();
     }
 
@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
 
         {
             open_file expected_output(argv[ARG_EXPECTED_OUTPUT_FILE], "wb");
-            std::copy(data.begin(), data.end(), open_file_write_iterator<value>(expected_output));
+            std::copy(data.begin(), data.end(), open_file_write_iterator<element>(expected_output));
             expected_output.close();
         }
     }

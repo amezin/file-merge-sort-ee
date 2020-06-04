@@ -10,7 +10,7 @@
 #include "tmp_file.h"
 #include "cancel.h"
 
-typedef unsigned long long value;
+typedef unsigned long long element;
 
 template<typename T>
 class open_file_write_iterator_with_cancel : public open_file_write_iterator<T>
@@ -33,8 +33,8 @@ private:
 
 void merge_files(open_file &input_a, open_file &input_b, open_file &output, const cancellation_token &cancel_token)
 {
-    open_file_read_iterator<value> input_a_iter(input_a), input_b_iter(input_b), input_end;
-    std::merge(input_a_iter, input_end, input_b_iter, input_end, open_file_write_iterator_with_cancel<value>(output, cancel_token));
+    open_file_read_iterator<element> input_a_iter(input_a), input_b_iter(input_b), input_end;
+    std::merge(input_a_iter, input_end, input_b_iter, input_end, open_file_write_iterator_with_cancel<element>(output, cancel_token));
 }
 
 void merge_files(tmp_file &input_a, tmp_file &input_b, open_file &output, const cancellation_token &cancel_token)
@@ -44,12 +44,12 @@ void merge_files(tmp_file &input_a, tmp_file &input_b, open_file &output, const 
     merge_files(open_input_a, open_input_b, output, cancel_token);
 }
 
-void split_chunk(open_file_read_iterator<value> &input, std::size_t chunk_size, open_file &output, const cancellation_token &cancel_token)
+void split_chunk(open_file_read_iterator<element> &input, std::size_t chunk_size, open_file &output, const cancellation_token &cancel_token)
 {
-    std::vector<value> values;
+    std::vector<element> values;
     values.reserve(chunk_size);
 
-    open_file_read_iterator<value> end;
+    open_file_read_iterator<element> end;
     while (values.size() < chunk_size && input != end) {
         cancel_token.test();
         values.push_back(*input);
@@ -57,7 +57,7 @@ void split_chunk(open_file_read_iterator<value> &input, std::size_t chunk_size, 
     }
 
     std::sort(values.begin(), values.end());
-    std::copy(values.begin(), values.end(), open_file_write_iterator_with_cancel<value>(output, cancel_token));
+    std::copy(values.begin(), values.end(), open_file_write_iterator_with_cancel<element>(output, cancel_token));
 }
 
 typedef std::list<tmp_file> tmp_file_set;
@@ -68,7 +68,7 @@ tmp_file_set split_input_to_chunks(open_file &input, std::size_t chunk_size, tmp
 
     tmp_file_set chunks;
 
-    open_file_read_iterator<value> input_iter(input), input_end;
+    open_file_read_iterator<element> input_iter(input), input_end;
     while (input_iter != input_end) {
         auto chunk = tmp_files.create();
         auto open_chunk = chunk.open("wb");
@@ -124,8 +124,8 @@ void merge_sort_file(open_file &input, open_file &output, std::size_t chunk_size
     } else if (chunks.size() == 1U) {
         auto chunk = take_chunk(chunks);
         auto open_chunk = chunk.open("rb");
-        open_file_read_iterator<value> input(open_chunk), input_end;
-        std::copy(input, input_end, open_file_write_iterator_with_cancel<value>(output, cancel_token));
+        open_file_read_iterator<element> input(open_chunk), input_end;
+        std::copy(input, input_end, open_file_write_iterator_with_cancel<element>(output, cancel_token));
     }
 }
 
