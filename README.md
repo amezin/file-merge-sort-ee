@@ -10,11 +10,11 @@ Run tests:
     $ cd build
     $ make test-small  # small fast tests
 
-    or
+or
 
     $ make test-big  # heavy test, no output validation
 
-    or
+or
 
     $ make check  # run all tests
 
